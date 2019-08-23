@@ -6,7 +6,11 @@ const uuid = require("node-uuid");
 let exportedMethods = {
     async getAllPosts(){
         const postCollection = await posts();
-        const postlists= await postCollection.find({}).toArray();
+        const postlists = await postCollection.find({}).toArray();
+        postlists.sort(function(a, b) {
+            return a.createdAt>b.createdAt ? -1 : a.createdAt<b.createdAt? 1 : 0;
+            
+        });
         return  postlists
     },
     
@@ -37,12 +41,11 @@ let exportedMethods = {
     async createPost(title, content, author, img, video){
         const postCollection = await posts();
         const userCollection = await users();
-        console.log('I am reaching in create post')
-        console.log(title);
-        console.log(content);
-        console.log(author);
-        console.log(img);
-        console.log(video);
+        // console.log(title);
+        // console.log(content);
+        // console.log(author);
+        // console.log(img);
+        // console.log(video);
         if (title==undefined||content==undefined||author==undefined){
             throw `Title, Content and Author fields are mandatory while creating a post.`
         }
@@ -60,6 +63,7 @@ let exportedMethods = {
             img:img,
             video:video,
             isLiked:false,
+            createdAt: new Date(),
             author:{
                 _id:author.id,
                 name:author.name
@@ -81,6 +85,7 @@ let exportedMethods = {
                 img:img,
                 video:video,
                 isLiked:false,
+                createdAt: new Date(),
                 author:{
                     _id:author.id,
                     name:author.name
@@ -98,92 +103,9 @@ let exportedMethods = {
         return await this.getPostById(newId);
     },
 
-    // async updatePost(id, newTitle, newContent) {
-    //     try{
-    //         if (!id){
-    //             throw "Please provide an id to update a Post";
-    //         }
-    //         if (!newTitle){
-    //             throw "Please provide a new title for the post";
-    //         }
-    //         if (!newContent){
-    //             throw "Please provide a new content for the post";
-    //         }
-
-    //         const postCollection = await posts();
-    //         const animalCollection = await animals();
-    //         let updatedPostData = {
-    //             title:newTitle,
-    //             content:newContent
-    //         };
-    //         //Updating the post in post DB
-    //         const updatedPostInfo = await postCollection.updateOne({_id: id}, {$set: updatedPostData})
-    //         if (updatedPostInfo.modifiedCount === 0){
-    //             throw "Could not update this Post";
-    //         }
-    //         const updatedPost = await this.getPostById(id);
-            
-    //         // Updating the Post Info in Animals DB
-    //         const myanimal = await animalCollection.findOne( { 'posts._id' : id  })
-    //         for (const x in myanimal.posts){
-    //             if (myanimal.posts[x]._id==id){
-    //                 // newUpdatedAnimalPost={
-    //                 //     title:newTitle
-    //                 // }
-    //                 // console.log(animalid)
-    //                 // const post = await animalCollection.findOne({ 'posts._id' : id })
-    //                 // console.log(post)
-    //                 animalid = myanimal._id
-    //                 updatedAnimalPostInfo = await animalCollection.updateOne({_id:animalid, 'posts._id' : id  }, {$set:{"posts.$.title":newTitle}});
-    //                 }
-    //             }
-
-    //         if (updatedAnimalPostInfo.modifiedCount === 0){
-    //             throw "Could not update this Post for animal";
-    //         }
-    //         return updatedPost;
-    //     }
-    //     catch(e){
-    //         console.log(e)
-    //     }
-    // },
-    // async deletePost(id){
-    //     const postCollection = await posts();  
-    //     const animalCollection = await animals();   
-    //     const newretobj={};
-    //     const mypost = await postCollection.findOne({_id:id});
-    //     console.log(mypost)
-    //     if (mypost === null){
-    //         throw "No Post with that id found";
-    //     } 
-    //     else{
-    //         newretobj['deleted']="true",
-    //         newretobj['data']=mypost
-    //         await postCollection.deleteOne({_id:id});
-    //     }
-    //     const myanimal = await animalCollection.findOne( { 'posts._id' : id  })
-    //     console.log(myanimal)
-    //     if (myanimal==null){
-    //         throw `animal is not found with this post`
-    //     } 
-    //     else{
-    //         for (const x in myanimal.posts){
-    //             if (myanimal.posts[x]._id==id){
-    //                 animalid = myanimal._id
-    //                 updatedAnimalPostInfo = await animalCollection.updateOne({_id:animalid}, {$pull:{"posts":{_id:id}}});
-    //                 }
-    //             }
-    //         }
-    //     if (updatedAnimalPostInfo.modifiedCount === 0){
-    //         throw "Could not update this post info for animal";
-    //     }
-    //     else{
-    //        console.log("The Post is removed from animal account info")
-    //     }
-
-    //     // console.log(updatedAnimalPostInfo)
-
-    //     return newretobj
-    // }
+ 
+   
+    
+   
 }
 module.exports=exportedMethods;

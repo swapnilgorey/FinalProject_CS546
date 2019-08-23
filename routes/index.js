@@ -226,25 +226,37 @@ const constructorMethod = app => {
     });
 
     app.get('/myFav', async (req, res) => {
-        const user = await userData.getUserById(req.session.user.id);
-        const favoritePosts = await userData.getUserFavoritePostsById(req.session.user.id);
-        if (favoritePosts.length > 0) {
-            res.render('home', {
-                posts: favoritePosts,
-                isUserLoggedIn: isUserLoggedIn,
-                user: req.session.user
-                //user:user.favoritePosts.author.name
-            });
+        if (req.session.name == 'AuthCookie'){
+            const user = await userData.getUserById(req.session.user.id);
+            const favoritePosts = await userData.getUserFavoritePostsById(req.session.user.id);
+            if (favoritePosts.length > 0) {
+
+                favoritePosts.sort(function(a, b) {
+                    return a.createdAt>b.createdAt ? -1 : a.createdAt<b.createdAt? 1 : 0;
+                    
+                });
+
+                res.render('home', {
+                    posts: favoritePosts,
+                    isUserLoggedIn: isUserLoggedIn,
+                    user: req.session.user
+                    //user:user.favoritePosts.author.name
+                });
+            }
+            else {
+                let posts = false
+                res.render('home', {
+                    posts: posts,
+                    isUserLoggedIn: isUserLoggedIn,
+                    user: req.session.user,
+                    message: "Sorry, you have not favorited any blogs."
+                });
+            }
+
+            
         }
-        else {
-            let posts = false
-            res.render('home', {
-                posts: posts,
-                isUserLoggedIn: isUserLoggedIn,
-                user: req.session.user,
-                message: "Sorry, you have not favorited any blogs."
-            });
-        }
+        
+        
     });
 
     app.get('/search', async (req, res) => {
@@ -331,6 +343,20 @@ const constructorMethod = app => {
         // });
         console.log('user posts in my posts',user.posts)
         if (user.posts.length > 0) {
+            const favoritePosts = await userData.getUserFavoritePostsById(req.session.user.id);
+            for (let i = 0; i < user.posts.length; i++) {
+                for (let j = 0; j < favoritePosts.length; j++) {
+                    if (user.posts[i]._id === favoritePosts[j]._id) {
+                        user.posts[i].isLiked = true;
+                    }
+                }
+            }
+
+            user.posts.sort(function(a, b) {
+                return a.createdAt>b.createdAt ? -1 : a.createdAt<b.createdAt? 1 : 0;
+                
+            });
+
             res.render('home', {
                 posts: user.posts,
                 isUserLoggedIn: isUserLoggedIn,
@@ -354,42 +380,8 @@ const constructorMethod = app => {
         res.redirect('/');
     });
 
-    // app.get('/', async (req, res)=>{
-    //     if (req.session.name=='AuthCookie') {
-    //         var postsList = await postData.getAllPosts()
-    //         res.render('home',{
-    //             posts : postsList
-    //         });
-    //     }
-    //     else{
-    //         res.render('login',{ title: 'welcome To User Login Page', error: req.query.error ? req.query.error : null });
-    //     }
-    // });
-
-    // app.post('/', async (req,res)=>{
-    //     if(req.getElementById('signUpBox')){
-    //         const {username,password,firstName,lastName} =req.body;
-    //         const adduser = await userData.registerUser(username,password,firstName,lastName)
-
-    //         if (adduser!==null){
-    //             res.render('home')
-    //         } else {
-    //             res.redirect('/?error=' + encodeURIComponent(res.error));
-    //         }
-    //     }
-    //     else if (document.getElementById('loginBox')){
-    //         loginSuccess()
-    //         if (loginSuccess){
-    //             isUserLoggedIn = true
-    //             res.render('private', {isUserLoggedIn : isUserLoggedIn});
-    //         }
-    //     }
-    //     else{
-    //         res.status(403);
-    //         url = req.url;
-    //         res.render('error', { title: '403', url: url });
-    //     }
-
-    // });
+    
+   
+    
 }
 module.exports = constructorMethod;
