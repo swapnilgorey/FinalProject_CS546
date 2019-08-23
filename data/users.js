@@ -11,23 +11,21 @@ let exportedMethods = {
         return userList;
     },
 
-    async registerUser(username,password,firstname,lastname) {
+    async registerUser(email,username,password,firstname,lastname) {
         const userCollection = await users();
-        const user = await userCollection.findOne({username:username})
-        if (user!==null){
+        const userName = await userCollection.findOne({username:username})
+        const eMail = await userCollection.findOne({email:email})
+        if (userName!==null){
             throw `Username already exists. Please try a differnet username`
         }
-        // if (username==undefined||animalType==undefined){
-        //     throw `Name and animal type field is mandatory while creating animal`
-        // }
-        // if (typeof(name)!='string'||typeof(animalType)!='string'){
-        //     throw `Name and animal type should be a string`
-        // }
+        if (eMail!==null){
+            throw `Email already exists. Please try a differnet email`
+        }
         var BCRYPT_SALT_ROUNDS = 12
         let hashedPassword = await bcrypt.hash(password,BCRYPT_SALT_ROUNDS);
-        console.log(hashedPassword)
         let newUser={
             _id:uuid.v4(),
+            email:email,
             username: username,
             hashedPassword: hashedPassword,
             firstName: firstname,
@@ -46,7 +44,7 @@ let exportedMethods = {
         return myUser;
     },
 
-    async authenticate (username,password){
+    async authenticate (logincred,password){
         // console.log("reached in authenticate" )
         // console.log(`username is ${username}`)
         // console.log(`username is ${password}`)
@@ -54,10 +52,13 @@ let exportedMethods = {
         // console.log(users)
         let myuser ={}
         for (i=0;i<users.length;i++){
-            if (users[i].username==username && await bcrypt.compare(password,users[i].hashedPassword)){
-                
+            if ((users[i].username==logincred && await bcrypt.compare(password,users[i].hashedPassword)) || (users[i].email==logincred && await bcrypt.compare(password,users[i].hashedPassword))){
                 myuser={
                     id: users[i]['_id'],
+                    email:users[i]['email'],
+                    username:users[i]['username'],
+                    firstName:users[i]['firstName'],
+                    lastName:users[i]['lastName'],
                     name: users[i]['firstName'] +" "+ users[i]['lastName'],
                     message:"Logged In Successfully"
                 }

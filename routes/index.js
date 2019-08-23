@@ -64,11 +64,31 @@ const constructorMethod = app =>{
             //res.render('login',{ title: 'welcome To User Login Page', error: req.query.error ? req.query.error : null });
         }
     });
-    
-    app.post('/private',loginSuccess, (req,res)=>{
+
+    app.get('/addBlog', (req, res) => {
         if (req.session.name=='AuthCookie') {
             isUserLoggedIn = true
-            res.render('private', {isUserLoggedIn : isUserLoggedIn, user: req.session.user});
+            const user = req.session.user;
+            const title = 'Welcome ' + user.name;
+            res.render('addBlog', { title: title, user: user, isUserLoggedIn:isUserLoggedIn });
+        } else {
+            res.status(403);
+            url = req.url;
+            res.render('error', { title: '403', url: url });
+        }
+    });
+    app.get('/userdetails', (req,res)=>{
+        if (req.session.name=='AuthCookie') {
+            isUserLoggedIn = true
+            res.render('userdetails', {isUserLoggedIn : isUserLoggedIn, user: req.session.user});
+        }
+
+    });
+
+    app.post('/userdetails',loginSuccess, (req,res)=>{
+        if (req.session.name=='AuthCookie') {
+            isUserLoggedIn = true
+            res.render('userdetails', {isUserLoggedIn : isUserLoggedIn, user: req.session.user});
         }
         else {
             // res.status(403);
@@ -81,8 +101,8 @@ const constructorMethod = app =>{
 
     app.post('/registered', async (req,res)=>{
         try{
-            const {username,password,firstName,lastName} =req.body;
-            const adduser = await userData.registerUser(username,password,firstName,lastName)
+            const {email,username,password,firstName,lastName} =req.body;
+            const adduser = await userData.registerUser(email,username,password,firstName,lastName)
 
             if (adduser!==null){
                 res.render('partials/signup',{
@@ -107,9 +127,10 @@ const constructorMethod = app =>{
             // console.log(postId)
             // console.log(req.session.user.id)
             const addLike = await userData.likePost(req.session.user.id,postId)
-            if (addlike){
-                return true 
+            if (addLike){
+                res.redirect('/')
             }
+           
         }
         catch(e){
             res.error=e;
@@ -119,7 +140,7 @@ const constructorMethod = app =>{
     
     app.get('/myFav', async(req, res)=>{
         const user = await userData.getUserById(req.session.user.id) 
-        console.log('reached my Fav')
+        // console.log('reached my Fav')
         console.log(user.favoritePosts)
         if (user.favoritePosts.length>0){
             res.render('home',{
@@ -143,7 +164,7 @@ const constructorMethod = app =>{
     app.get('/search',async(req,res)=>{
         const string = req.query.key
         var searchedPosts =[];
-        console.log(string)
+        // console.log(string)
         const postsList = await postData.getAllPosts()
         postsList.forEach(obj=>{
             var pattern = new RegExp (string, 'ig')
@@ -173,25 +194,13 @@ const constructorMethod = app =>{
         });  
     });
 
-    app.get('/private', (req, res) => {
-        if (req.session.name=='AuthCookie') {
-            isUserLoggedIn = true
-            const user = req.session.user;
-            const title = 'Welcome ' + user.name;
-            res.render('private', { title: title, user: user, isUserLoggedIn:isUserLoggedIn });
-        } else {
-            res.status(403);
-            url = req.url;
-            res.render('error', { title: '403', url: url });
-        }
-    });
-    app.post("/addpost", async (req, res) => {
+
+    app.post("/addBlog", async (req, res) => {
         const postInfo = req.body;
 
         postInfo.author= {id: req.session.user.id, name:req.session.user.name}
-        console.log("i m in addpost router")
-        console.log(postInfo)
-        console.log(postInfo.image)
+        // console.log(postInfo)
+        // console.log(postInfo.image)
       
         if (!postInfo) {
             res.status(400).json({ error: "You must provide data to create a Post" });

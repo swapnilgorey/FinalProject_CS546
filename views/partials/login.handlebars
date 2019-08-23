@@ -1,6 +1,6 @@
 <div id="loginBox" class="login-modal">
 
-    <form class="login-modal-content animate" action='/private' method="POST">
+    <form class="login-modal-content animate" action='/userdetails' method="POST">
         <div class="login-imgcontainer">
             <span onclick="document.getElementById('loginBox').style.display='none'" class="close" title="Close Modal">&times;</span>
             
@@ -8,8 +8,8 @@
         </div>
 
         <div class="login-container">
-            <label for="email"><b>Email</b></label>
-            <input class="authinput" type="text" placeholder="Enter email" name="email" required>
+            <label for="email"><b>Email or Username</b></label>
+            <input class="authinput" type="text" placeholder="Enter email or Username" name="email" required>
 
             <label for="password"><b>Password</b></label>
             <input class="authinput" type="password" placeholder="Enter Password" name="password" required>

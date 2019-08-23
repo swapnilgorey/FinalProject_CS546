@@ -3,7 +3,7 @@
     <form class="login-modal-content animate" action='#'> 
         <div class="login-imgcontainer" id='popUp' >
             <a onclick="document.getElementById('signUpBox').style.display='none'" class="close" title="Close Modal" href="/">&times;</a>
-            <h1 class="login-modal-box-title">User Registered Successfully</h1>
+            <h3 class="login-modal-box-title">User Registered Successfully</h3>
         </div>
     </form>
 </div>
@@ -16,12 +16,11 @@
             <h1 class="login-modal-box-title">Sign up</h1>
         </div>
 
-
         <div class="login-container">
-            {{!-- <label for="email"><b>Email</b></label>
-            <input class="authinput" type="text" placeholder="Enter email" name="email" required> --}}
+            <label for="email"><b>Email</b></label>
+            <input class="authinput" type="email" placeholder="Enter email" name="email" required>
 
-            <label for="username"><b>Email</b></label>
+            <label for="username"><b>Username</b></label>
             <input class="authinput" type="text" placeholder="Enter username" name="username" required>
 
             <label for="password"><b>Password</b></label>
@@ -32,9 +31,6 @@
 
             <label for="lastName"><b>Last Name</b></label>
             <input class="authinput" type="text" placeholder="Enter last name" name="lastName">
-
-            {{!-- <label for="displayName"><b>Display Name</b></label>
-            <input class="authinput" type="text" placeholder="Enter display name" name="displayName"> --}}
 
             <button class="authbutton" type="submit">Sign up</button>
 
