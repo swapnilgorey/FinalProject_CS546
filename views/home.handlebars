@@ -4,6 +4,7 @@
 </header>
 
 <section style="margin-bottom:10vh">
+    {{#if posts}}
     {{#each posts}}
     <article class="blog-list">
         {{!-- <header class='bloglist'> --}}
@@ -23,10 +24,14 @@
            
             
         {{!-- </header> --}}
-        
-       
+  
     </article>
 {{/each}}
+{{else}}
+<article>
+    <h3 class="blog-list" style='text-align:center'>{{message}}</h3>
+</article>
+{{/if}}
 </section>
 
 {{!-- 

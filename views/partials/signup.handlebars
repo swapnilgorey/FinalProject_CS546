@@ -1,12 +1,21 @@
-
+{{#if signedUpUser}}
+<div id="signUpBox" class="login-modal" style='display:block' >
+    <form class="login-modal-content animate" action='#'> 
+        <div class="login-imgcontainer" id='popUp' >
+            <a onclick="document.getElementById('signUpBox').style.display='none'" class="close" title="Close Modal" href="/">&times;</a>
+            <h1 class="login-modal-box-title">User Registered Successfully</h1>
+        </div>
+    </form>
+</div>
+{{else}}
 <div id="signUpBox" class="login-modal">
-
     <form class="login-modal-content animate" action='/registered' method="POST">
         <div class="login-imgcontainer">
             <span onclick="document.getElementById('signUpBox').style.display='none'" class="close" title="Close Modal">&times;</span>
-            
+
             <h1 class="login-modal-box-title">Sign up</h1>
         </div>
+
 
         <div class="login-container">
             {{!-- <label for="email"><b>Email</b></label>
@@ -37,5 +46,6 @@
                 <a onclick="document.getElementById('signUpBox').style.display='none';document.getElementById('loginBox').style.display='block'" href="#">Login</a>
             </span>
         </div>
-    </form>
+    </form>  
 </div>
+{{/if}}
