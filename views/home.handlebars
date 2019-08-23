@@ -1,37 +1,47 @@
 <header>
     <h1 class="header-font">Welcome to the Blog Post</h1>
-   
+
 </header>
 
 <section style="margin-bottom:10vh">
     {{#if posts}}
     {{#each posts}}
     <article class="blog-list">
-        {{!-- <header class='bloglist'> --}}
-            <img src='{{this.img}}'width='70px' height="70px"> 
-            <h3>{{this.title}}</h3>
-            {{!-- <icon onclick="(this.favorite= !this.favorite)" class="ifFavorite? red: empty"> heart icon</icon> --}}
-            <a href="/userdetails/{{this.author._id}}"> <p class='padding-none' > Posted By:{{this.author.name}}</p> </a>
-            <br> 
-            <p class='padding-none text-left-align'>{{this.content}}</p>
-            {{!-- <a  href="/delete-recipe/{{recipe._id}}">like</a> --}}
-            {{#if this.isLiked}}
-            <a  href="/unlike/{{this._id}}">UnLike </a>
-            {{else}}
-             <a  href="/like/{{this._id}}">Like </a>
-            {{/if}}
-            
-           
-            
-        {{!-- </header> --}}
-  
+        <div>
+            <div>
+                <img src='{{this.img}}' width='70px' height="70px">
+                <h3>{{this.title}}</h3>
+                {{!-- <icon onclick="(this.favorite= !this.favorite)" class="ifFavorite? red: empty"> heart icon</icon> --}}
+                <a href="/userdetails/{{this.author._id}}">
+                    <p class='padding-none'> Posted By:{{this.author.name}}</p>
+                </a>
+                <br>
+                <div>
+                    <div>
+                        <p class='padding-none text-left-align'>{{this.content}}</p>
+                    </div>
+                    <div style="margin-top: 10px">
+                        {{#if this.isLiked}}
+                        <a href="/unlike/{{this._id}}"><i class='glyphicon glyphicon-heart'
+                                style='font-size:24px'></i></a>
+                        {{else}}
+                        <a href="/like/{{this._id}}"><i class='glyphicon glyphicon-heart-empty'
+                                style='font-size:24px'></i></a>
+                        {{/if}}
+                    </div>
+                </div>
+
+            </div>
+            {{!-- <header class='bloglist'> --}}
+
+        </div>
     </article>
-{{/each}}
-{{else}}
-<article>
-    <h3 class="blog-list" style='text-align:center'>{{message}}</h3>
-</article>
-{{/if}}
+    {{/each}}
+    {{else}}
+    <article>
+        <h3 class="blog-list" style='text-align:center'>{{message}}</h3>
+    </article>
+    {{/if}}
 </section>
 
 {{!-- 
