@@ -35,66 +35,36 @@ const constructorMethod = app =>{
          if (req.session.name=='AuthCookie') {
             isUserLoggedIn = true
             var postsList = await postData.getAllPosts();
+            posts = postsList.length>0 ? true : false; 
             // postsList.forEach(element => {
             //     element['img']= 'public/img/appstore-new.png'
             // }); 
             // console.log(req.session.user)
             res.render('home', 
-            {posts : postsList, isUserLoggedIn : isUserLoggedIn, user: req.session.user});
+            {posts : postsList, 
+            isUserLoggedIn : isUserLoggedIn,
+            user: req.session.user,
+            message: "Be the first one to create a blog."
+        });
             
         }
         else{
             isUserLoggedIn = false
             var postsList = await postData.getAllPosts();
-            postsList.forEach(element => {
-                element['img']= 'public/img/appstore-new.png'
-            });
+            posts = postsList.length>0 ? true : false; 
+            // postsList.forEach(element => {
+            //     element['img']= 'public/img/appstore-new.png'
+            // });
             res.render('home',{
                 posts : postsList,
+                message: "Be the first one to create a blog.",
                 error: req.query.error ? req.query.error : null
+                
             });
             //res.render('login',{ title: 'welcome To User Login Page', error: req.query.error ? req.query.error : null });
         }
     });
     
-    // app.get('/', async (req, res)=>{
-    //     if (req.session.name=='AuthCookie') {
-    //         var postsList = await postData.getAllPosts()
-    //         res.render('home',{
-    //             posts : postsList
-    //         });
-    //     }
-    //     else{
-    //         res.render('login',{ title: 'welcome To User Login Page', error: req.query.error ? req.query.error : null });
-    //     }
-    // });
-
-    // app.post('/', async (req,res)=>{
-    //     if(req.getElementById('signUpBox')){
-    //         const {username,password,firstName,lastName} =req.body;
-    //         const adduser = await userData.registerUser(username,password,firstName,lastName)
-
-    //         if (adduser!==null){
-    //             res.render('home')
-    //         } else {
-    //             res.redirect('/?error=' + encodeURIComponent(res.error));
-    //         }
-    //     }
-    //     else if (document.getElementById('loginBox')){
-    //         loginSuccess()
-    //         if (loginSuccess){
-    //             isUserLoggedIn = true
-    //             res.render('private', {isUserLoggedIn : isUserLoggedIn});
-    //         }
-    //     }
-    //     else{
-    //         res.status(403);
-    //         url = req.url;
-    //         res.render('error', { title: '403', url: url });
-    //     }
-
-    // });
-
     app.post('/private',loginSuccess, (req,res)=>{
         if (req.session.name=='AuthCookie') {
             isUserLoggedIn = true
@@ -115,7 +85,9 @@ const constructorMethod = app =>{
             const adduser = await userData.registerUser(username,password,firstName,lastName)
 
             if (adduser!==null){
-                res.render('register')
+                res.render('partials/signup',{
+                    signedUpUser : adduser
+                })
             } else {
                 
             }
@@ -135,10 +107,13 @@ const constructorMethod = app =>{
             // console.log(postId)
             // console.log(req.session.user.id)
             const addLike = await userData.likePost(req.session.user.id,postId)
+            if (addlike){
+                return true 
+            }
         }
         catch(e){
-            console.log(e)
-            res.status(403).json({error:e});
+            res.error=e;
+            res.redirect('/?error=' + encodeURIComponent(res.error));
         }
     });
     
@@ -146,17 +121,21 @@ const constructorMethod = app =>{
         const user = await userData.getUserById(req.session.user.id) 
         console.log('reached my Fav')
         console.log(user.favoritePosts)
-        if (user.favoritePosts!==null){
+        if (user.favoritePosts.length>0){
             res.render('home',{
                 posts:user.favoritePosts,
                 isUserLoggedIn:isUserLoggedIn,
+                user:req.session.user
                 //user:user.favoritePosts.author.name
             });
         }
         else{
+            let posts = false
             res.render('home',{
-                posts:"There are no favorite posts available",
+                posts:posts,
                 isUserLoggedIn:isUserLoggedIn,
+                user:req.session.user,
+                message:"Sorry, you have not favorited any blogs."
             });
         }
     });
@@ -176,7 +155,8 @@ const constructorMethod = app =>{
             res.render('home',{
                 posts:searchedPosts,
                 isUserLoggedIn:isUserLoggedIn,
-                //user:user.favoritePosts.author.name
+                user:req.session.user,
+                message:"No results found for this search"
             });
         }
         
@@ -242,7 +222,7 @@ const constructorMethod = app =>{
             postInfo.video
           );
       
-          res.json(newPost);
+          res.redirect("/myPosts");
         } catch (e) {
           res.json({ error: e });
         }
@@ -251,25 +231,68 @@ const constructorMethod = app =>{
     app.get ('/myPosts', async(req, res)=>{
         // const user = await userData.getUserById(req.session.user.id)
         const postsList = await postData.getPostByName(req.session.user.name)
-        postsList.forEach(element => {
-            element['img']= 'public/img/appstore-new.png'
-        });
+        // postsList.forEach(element => {
+        //     element['img']= 'public/img/appstore-new.png'
+        // });
         console.log(postsList)
-        if (postsList!==null){
+        if (postsList.length>0){
             res.render('home',{
                 posts:postsList,
                 isUserLoggedIn:isUserLoggedIn,
                 user:req.session.user
-
+            });
+        }
+        else{
+            let posts = false
+            res.render('home',{
+                posts:posts,
+                isUserLoggedIn:isUserLoggedIn,
+                user:req.session.user,
+                message:"Sorry, you have not created any blogs yet."
             });
         }
     });
-    
-    
 
     app.use('*', (req, res) => {
         res.redirect('/');
     });
+
+    // app.get('/', async (req, res)=>{
+    //     if (req.session.name=='AuthCookie') {
+    //         var postsList = await postData.getAllPosts()
+    //         res.render('home',{
+    //             posts : postsList
+    //         });
+    //     }
+    //     else{
+    //         res.render('login',{ title: 'welcome To User Login Page', error: req.query.error ? req.query.error : null });
+    //     }
+    // });
+
+    // app.post('/', async (req,res)=>{
+    //     if(req.getElementById('signUpBox')){
+    //         const {username,password,firstName,lastName} =req.body;
+    //         const adduser = await userData.registerUser(username,password,firstName,lastName)
+
+    //         if (adduser!==null){
+    //             res.render('home')
+    //         } else {
+    //             res.redirect('/?error=' + encodeURIComponent(res.error));
+    //         }
+    //     }
+    //     else if (document.getElementById('loginBox')){
+    //         loginSuccess()
+    //         if (loginSuccess){
+    //             isUserLoggedIn = true
+    //             res.render('private', {isUserLoggedIn : isUserLoggedIn});
+    //         }
+    //     }
+    //     else{
+    //         res.status(403);
+    //         url = req.url;
+    //         res.render('error', { title: '403', url: url });
+    //     }
+
+    // });
 }
 module.exports = constructorMethod;
-  
