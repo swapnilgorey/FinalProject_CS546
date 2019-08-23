@@ -4,16 +4,18 @@
 <div class="container-details">
    <div>
       <div class="row-details">
-         Name: {{selectedUser.firstName}} {{selectedUser.lastName}}
+         <span class="title-text">Name: </span>{{selectedUser.firstName}} {{selectedUser.lastName}}
       </div>
       <div class="row-details">
-         Username: {{selectedUser.username}}
+         <span class="title-text">Username</span>: {{selectedUser.username}}
       </div>
       <div class="row-details">
-         Email: {{selectedUser.email}}
+         <span class="title-text">Email</span>: {{selectedUser.email}}
       </div>
    </div>
+   <div class = "vr-seperator"></div>
    <div>
+      {{#unless isLoggedInUser}}
       <div class="row-details">
          {{#if selectedUser.alreadyFollowing}}
          <a href="/unfollowUser/{{selectedUser.id}}"><i class='fas fa-user-check'></i> <span style="margin-left: 10px">Unfollow {{selectedUser.firstName}} now</span></a>
@@ -21,8 +23,9 @@
          <a href="/followUser/{{selectedUser.id}}"><i class='fas fa-user-alt'></i><span style="margin-left: 10px">Start following</span></a>
          {{/if}}
       </div>
+      {{/unless}}   
       <div class="row-details">
-         Following {{selectedUser.following.length}}
+         <span class="title-text">Following:</span> {{selectedUser.following.length}}
       </div>
    </div>
 </div>

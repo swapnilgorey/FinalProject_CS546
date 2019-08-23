@@ -189,3 +189,11 @@ label {
     margin-top: 10px;
     display: flex;
 }
+.vr-seperator {
+    background-color: #323c41;
+    width: 1px;
+    margin: 9px 31px 14px 31px;
+}
+.title-text{
+    font-weight: 700;
+}

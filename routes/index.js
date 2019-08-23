@@ -93,22 +93,18 @@ const constructorMethod = app => {
         if (req.session.name == 'AuthCookie') {
             isUserLoggedIn = true
             const followingList = await userData.getUserFollowingUserListById(req.session.user.id);
-           
-            console.log()
             if (req.params.id) {
                 const selectedUser = await userData.getUserById(req.params.id);
                 const loggedInUser = await userData.getUserById(req.session.user.id);
-                console.log('selected User is ',selectedUser)
                 followingList.forEach(followingUser=> {
                     if(followingUser.id === selectedUser.id) {
-                        console.log('list FollowingUser', followingUser)
                         selectedUser['alreadyFollowing'] = true;
                     } else {
                         selectedUser['alreadyFollowing'] = false;
                     }
                 });
-                console.log('isAlreadyFollowing',selectedUser.alreadyFollowing);
-                res.render('userdetails', { isUserLoggedIn: isUserLoggedIn, selectedUser: selectedUser, user: loggedInUser });
+                const isLoggedInUser = selectedUser.id===loggedInUser.id ? true : false;
+                res.render('userdetails', { isUserLoggedIn: isUserLoggedIn, selectedUser: selectedUser, user: loggedInUser, isLoggedInUser: isLoggedInUser });
             }
         } else {
             res.redirect('/')
@@ -119,7 +115,7 @@ const constructorMethod = app => {
         if (req.session.name == 'AuthCookie') {
             const loggedInUser = await userData.getUserById(req.session.user.id);
             isUserLoggedIn = true
-            res.render('userdetails', { isUserLoggedIn: isUserLoggedIn, selectedUser: loggedInUser, user: loggedInUser });
+            res.render('userdetails', { isUserLoggedIn: isUserLoggedIn, selectedUser: loggedInUser, user: loggedInUser, isLoggedInUser: true });
         }
         else {
             // res.status(403);
@@ -341,6 +337,7 @@ const constructorMethod = app => {
         // postsList.forEach(element => {
         //     element['img']= 'public/img/appstore-new.png'
         // });
+       
         console.log('user posts in my posts',user.posts)
         if (user.posts.length > 0) {
             const favoritePosts = await userData.getUserFavoritePostsById(req.session.user.id);

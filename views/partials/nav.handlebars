@@ -1,7 +1,7 @@
 <div class="topNav container" id="nav">
     <div class="logoSect" style='width:auto' >
         {{#if isUserLoggedIn}}
-        <a class="logo" href="/userdetails/{{user.id}}">Welcome {{user.name}}</a>
+        <a class="logo" style="font-size: 22px" href="/userdetails/{{user.id}}">Welcome {{user.firstName}}</a>
         {{else}}
         <a class="logo" href="/">Blog Post</a>
         {{/if}}
