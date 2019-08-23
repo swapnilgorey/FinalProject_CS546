@@ -59,6 +59,7 @@ let exportedMethods = {
                 myuser={
                     id: users[i]['_id'],
                     name: users[i]['firstName'] +" "+ users[i]['lastName'],
+                    favoritePosts: users[i]['favoritePosts'],
                     message:"Logged In Successfully"
                 }
             }
@@ -76,7 +77,18 @@ let exportedMethods = {
         return myuser;
     },
 
-    async likePost(userid, postid){
+    async getUserFavoritePostsById(userId) {
+        const userCollection = await users();
+        const myuser = await userCollection.findOne({_id: userId});
+        // const favoritePost = myuser.favoritePosts.filter(post =>{ post._id === id });
+        // console.log(favoritePost);
+        if (myuser === null){
+            throw "user not found with the given id: " + userId;
+        }
+        return myuser.favoritePosts;
+    },
+
+    async likePost(userid, postid, isLiked){
         // if (userid==undefined||postid==undefined){
         //     throw `Please Sign In to Like the Post`
         // }
@@ -85,7 +97,14 @@ let exportedMethods = {
         // const myuser = await userCollection.findOne({_id:userid})
         // console.log('My user is \n')
         // console.log(myuser)
-        const updatedUserInfo = await userCollection.updateOne({_id:userid}, {$push: {favoritePosts:favoritePost}})
+        favoritePost.isLiked = isLiked;
+        let updatedUserInfo ;
+        if(favoritePost.isLiked) {
+            updatedUserInfo = await userCollection.updateOne({_id:userid}, {$push: {favoritePosts:favoritePost}})
+         
+        } else {
+            updatedUserInfo = await userCollection.updateOne({_id:userid}, {$pull: {favoritePosts: {_id: favoritePost._id}}})
+        }
         
             if (updatedUserInfo.modifiedCount === 0){
                 throw "Something went wrong, Could not like the post";

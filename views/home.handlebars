@@ -15,7 +15,7 @@
             <br> 
             <p class='padding-none text-left-align'>{{this.content}}</p>
             {{!-- <a  href="/delete-recipe/{{recipe._id}}">like</a> --}}
-           {{#if this.isLiked}}
+            {{#if this.isLiked}}
             <a  href="/unlike/{{this._id}}">UnLike </a>
             {{else}}
              <a  href="/like/{{this._id}}">Like </a>

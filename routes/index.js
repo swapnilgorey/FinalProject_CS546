@@ -39,6 +39,14 @@ const constructorMethod = app =>{
             // postsList.forEach(element => {
             //     element['img']= 'public/img/appstore-new.png'
             // }); 
+            const favoritePosts = await userData.getUserFavoritePostsById(req.session.user.id);
+            for(let i=0; i<postsList.length; i++){
+                for(let j=0; j<favoritePosts.length; j++) {
+                    if(postsList[i]._id === favoritePosts[j]._id) {
+                        postsList[i].isLiked = true;
+                    }
+                }
+            }
             // console.log(req.session.user)
             res.render('home', 
             {posts : postsList, 
@@ -52,6 +60,9 @@ const constructorMethod = app =>{
             isUserLoggedIn = false
             var postsList = await postData.getAllPosts();
             posts = postsList.length>0 ? true : false; 
+            postsList.forEach(element => {
+                element.isLiked = false;
+            });
             // postsList.forEach(element => {
             //     element['img']= 'public/img/appstore-new.png'
             // });
@@ -106,24 +117,47 @@ const constructorMethod = app =>{
             const postId =req.params.id
             // console.log(postId)
             // console.log(req.session.user.id)
-            const addLike = await userData.likePost(req.session.user.id,postId)
-            if (addlike){
-                return true 
+            addLike = await userData.likePost(req.session.user.id,postId,true);
+            if (addLike){
+               res.redirect('/'); 
             }
         }
         catch(e){
             res.error=e;
+            console.log('error in like', e);
+            res.redirect('/?error=' + encodeURIComponent(res.error));
+        }
+    });
+
+    app.get('/unlike/:id', async(req,res)=>{
+        try{
+            if (req.session.user===undefined){
+                throw `Please Sign In to Like the Post`
+            }
+            const postId =req.params.id
+            // const setLike = await postData.likePost(postId);
+            const addLike = await userData.likePost(req.session.user.id,postId,false);
+            if (addLike){
+                res.redirect('/'); 
+             }
+        }
+        catch(e){
+            res.error=e;
+            console.log('error in dslike like', e);
+
             res.redirect('/?error=' + encodeURIComponent(res.error));
         }
     });
     
     app.get('/myFav', async(req, res)=>{
-        const user = await userData.getUserById(req.session.user.id) 
+        const user = await userData.getUserById(req.session.user.id) ;
+        const favoritePosts = await userData.getUserFavoritePostsById(req.session.user.id);
+
         console.log('reached my Fav')
-        console.log(user.favoritePosts)
-        if (user.favoritePosts.length>0){
+        console.log('my fav tab',favoritePosts)
+        if (favoritePosts.length>0){
             res.render('home',{
-                posts:user.favoritePosts,
+                posts:favoritePosts,
                 isUserLoggedIn:isUserLoggedIn,
                 user:req.session.user
                 //user:user.favoritePosts.author.name
