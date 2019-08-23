@@ -1,7 +1,7 @@
 <div class="topNav container" id="nav">
     <div class="logoSect" style='width:auto' >
         {{#if isUserLoggedIn}}
-        <a class="logo" href="/userdetails">Welcome {{user.name}}</a>
+        <a class="logo" href="/userdetails/{{user.id}}">Welcome {{user.name}}</a>
         {{else}}
         <a class="logo" href="/">Blog Post</a>
         {{/if}}
@@ -19,7 +19,7 @@
             {{#if isUserLoggedIn}}
             <li class="cfx "><a href="/myPosts">My Blogs</a></li>
             <li class="cfx "><a href="/myFav">Fav Blogs</a></li>
-            <li class="cfx "><a href="/private">Add Blog</a></li>
+            <li class="cfx "><a href="/addBlog">Add Blog</a></li>
 
             {{/if}}
 

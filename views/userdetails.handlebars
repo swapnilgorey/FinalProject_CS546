@@ -1,0 +1,32 @@
+<header>
+    <h2>User Details</h2>
+</header>
+
+<div>
+   FirstName: {{selectedUser.firstName}}
+</div>
+<div>
+   LastName: {{selectedUser.lastName}}
+</div>
+<div>
+   Username: {{selectedUser.username}}
+</div>
+<div>
+   Email: {{selectedUser.email}}
+</div>
+<div>
+   {{#if selectedUser.alreadyFollowing}}
+  <a href="/unfollowUser/{{selectedUser.id}}">Click here to Unfollow {{selectedUser.firstName}} {{selectedUser.lastName}}</a>
+  {{else}}
+    <a href="/followUser/{{selectedUser.id}}">Click here to follow {{selectedUser.firstName}} {{selectedUser.lastName}}</a>
+   {{/if}}
+</div>
+<div>
+   Following {{user.following.length}}
+</div>
+<div>
+    Followers
+    <ul>
+        <li>{{this.followers.name}}</li>
+    </ul> 
+</div>

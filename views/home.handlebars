@@ -11,7 +11,7 @@
             <img src='{{this.img}}'width='70px' height="70px"> 
             <h3>{{this.title}}</h3>
             {{!-- <icon onclick="(this.favorite= !this.favorite)" class="ifFavorite? red: empty"> heart icon</icon> --}}
-            <p class='padding-none'> Posted By:{{this.author.name}}</p>
+            <a href="/userdetails/{{this.author._id}}"> <p class='padding-none' > Posted By:{{this.author.name}}</p> </a>
             <br> 
             <p class='padding-none text-left-align'>{{this.content}}</p>
             {{!-- <a  href="/delete-recipe/{{recipe._id}}">like</a> --}}

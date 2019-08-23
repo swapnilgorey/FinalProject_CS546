@@ -76,7 +76,15 @@ let exportedMethods = {
         const updateduserInfo = await userCollection.updateOne({_id: author.id}, {$push: {
             posts: {
                 _id:newId,
-                title:title
+                title:title,
+                content: content,
+                img:img,
+                video:video,
+                isLiked:false,
+                author:{
+                    _id:author.id,
+                    name:author.name
+            }
             }
         }});
 
