@@ -45,11 +45,7 @@ let exportedMethods = {
     },
 
     async authenticate (logincred,password){
-        // console.log("reached in authenticate" )
-        // console.log(`username is ${username}`)
-        // console.log(`username is ${password}`)
         let users = await this.getAllusers()
-        // console.log(users)
         let myuser ={}
         for (i=0;i<users.length;i++){
             if ((users[i].username==logincred && await bcrypt.compare(password,users[i].hashedPassword)) || (users[i].email==logincred && await bcrypt.compare(password,users[i].hashedPassword))){
@@ -66,7 +62,6 @@ let exportedMethods = {
                 }
             }
         }
-        // console.log(myuser)
         return myuser;
     },
     async getUserById(id) {
@@ -76,7 +71,6 @@ let exportedMethods = {
         if (myuser === null){
             throw "user not found with the given id: " + id;
         } else {
-            console.log('else ', myuser)
             mappedUser={
                 id: myuser['_id'],
                 email:myuser['email'],
@@ -97,8 +91,6 @@ let exportedMethods = {
     async getUserFavoritePostsById(userId) {
         const userCollection = await users();
         const myuser = await userCollection.findOne({_id: userId});
-        // const favoritePost = myuser.favoritePosts.filter(post =>{ post._id === id });
-        // console.log(favoritePost);
         if (myuser === null){
             throw "user not found with the given id: " + userId;
         }
@@ -107,22 +99,14 @@ let exportedMethods = {
     async getUserFollowingUserListById(userId) {
         const userCollection = await users();
         const myuser = await userCollection.findOne({_id: userId});
-        // const favoritePost = myuser.favoritePosts.filter(post =>{ post._id === id });
-        // console.log(favoritePost);
         if (myuser === null){
             throw "user not found with the given id: " + userId;
         }
         return myuser.following;
     },
     async likePost(userid, postid, isLiked){
-        // if (userid==undefined||postid==undefined){
-        //     throw `Please Sign In to Like the Post`
-        // }
         const favoritePost = await posts.getPostById(postid)
         const userCollection = await users();
-        // const myuser = await userCollection.findOne({_id:userid})
-        // console.log('My user is \n')
-        // console.log(myuser)
         favoritePost.isLiked = isLiked;
         let updatedUserInfo ;
         if(favoritePost.isLiked) {
@@ -162,44 +146,5 @@ let exportedMethods = {
         return favoritePost
 
     },
-
-    // async updateAnimal(id, newName, newAnimalType) {
-    //     if (!id){
-    //         throw "Please provide an id to update an animal";
-    //     }
-    //     if (!newName){
-    //         throw "Please provide a new name to update an animal";
-    //     }
-    //     if (!newAnimalType){
-    //         throw "Please provide a new animal type to update an animal";
-    //     }
-
-    //     const animalCollection = await animals();
-    //     let updatedAnimalData = {
-    //         name:newName,
-    //         animalType:newAnimalType
-    //     };
-    //     const updatedAnimalInfo = await animalCollection.updateOne({_id: id}, {$set: updatedAnimalData})
-    //     if (updatedAnimalInfo.modifiedCount === 0){
-    //          throw "Could not update this animal";
-    //     }
-    //     const updatedAnimal = await this.getAnimalById(id);
-    //     return updatedAnimal;
-    // },
-    // async deleteAnimal(id){
-    //     const animalCollection = await animals();     
-    //     const newretobj={};
-    //     const myanimal = await animalCollection.findOne({_id:id});
-    //     // myanimal = await animalCollection.remove({_id:object_id});
-    //     if (myanimal === null){
-    //         throw "No animal with that id";
-    //     } 
-    //     else{
-    //         newretobj['deleted']="true",
-    //         newretobj['data']=myanimal
-    //         await animalCollection.deleteOne({_id:id});
-    //     }
-    //     return newretobj
-    // },
 }
 module.exports = exportedMethods;

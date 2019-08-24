@@ -4,12 +4,8 @@ const userData = data.users;
 
 const loginSuccess = async (req, res, next) => {
     const { email, password } = req.body;
-    console.log(email)
-    console.log(password)
     const user = await userData.authenticate(email, password)
-    console.log("reached login success again after authentcating")
-    console.log(user)
-    //console.log(Object.keys(user).length)
+    console.log("reached login success again after authenticating")
     try {
         if (Object.keys(user).length > 0) {
             var hour = 3600000
@@ -36,9 +32,6 @@ const constructorMethod = app => {
             isUserLoggedIn = true
             var postsList = await postData.getAllPosts();
             posts = postsList.length > 0 ? true : false;
-            // postsList.forEach(element => {
-            //     element['img']= 'public/img/appstore-new.png'
-            // }); 
             const favoritePosts = await userData.getUserFavoritePostsById(req.session.user.id);
             for (let i = 0; i < postsList.length; i++) {
                 for (let j = 0; j < favoritePosts.length; j++) {
@@ -47,7 +40,6 @@ const constructorMethod = app => {
                     }
                 }
             }
-            // console.log(req.session.user)
             res.render('home',
                 {
                     posts: postsList,
@@ -64,16 +56,12 @@ const constructorMethod = app => {
             postsList.forEach(element => {
                 element.isLiked = false;
             });
-            // postsList.forEach(element => {
-            //     element['img']= 'public/img/appstore-new.png'
-            // });
             res.render('home', {
                 posts: postsList,
                 message: "Be the first one to create a blog.",
                 error: req.query.error ? req.query.error : null
 
             });
-            //res.render('login',{ title: 'welcome To User Login Page', error: req.query.error ? req.query.error : null });
         }
     });
 
@@ -96,14 +84,14 @@ const constructorMethod = app => {
             if (req.params.id) {
                 const selectedUser = await userData.getUserById(req.params.id);
                 const loggedInUser = await userData.getUserById(req.session.user.id);
-                followingList.forEach(followingUser=> {
-                    if(followingUser.id === selectedUser.id) {
+                followingList.forEach(followingUser => {
+                    if (followingUser.id === selectedUser.id) {
                         selectedUser['alreadyFollowing'] = true;
                     } else {
                         selectedUser['alreadyFollowing'] = false;
                     }
                 });
-                const isLoggedInUser = selectedUser.id===loggedInUser.id ? true : false;
+                const isLoggedInUser = selectedUser.id === loggedInUser.id ? true : false;
                 res.render('userdetails', { isUserLoggedIn: isUserLoggedIn, selectedUser: selectedUser, user: loggedInUser, isLoggedInUser: isLoggedInUser });
             }
         } else {
@@ -111,18 +99,14 @@ const constructorMethod = app => {
         }
     });
 
-    app.post('/userdetails', loginSuccess, async(req, res) => {
+    app.post('/userdetails', loginSuccess, async (req, res) => {
         if (req.session.name == 'AuthCookie') {
             const loggedInUser = await userData.getUserById(req.session.user.id);
             isUserLoggedIn = true
             res.render('userdetails', { isUserLoggedIn: isUserLoggedIn, selectedUser: loggedInUser, user: loggedInUser, isLoggedInUser: true });
         }
         else {
-            // res.status(403);
-            // url = req.url;
             res.redirect('/?error=' + encodeURIComponent(res.error));
-
-            //res.redirect('/error=' + encodeURIComponent(res.error));
         }
     });
 
@@ -151,8 +135,6 @@ const constructorMethod = app => {
                 throw `Please Sign In to Like the Post`
             }
             const postId = req.params.id
-            // console.log(postId)
-            // console.log(req.session.user.id)
             addLike = await userData.likePost(req.session.user.id, postId, true);
             if (addLike) {
                 res.redirect('/');
@@ -171,7 +153,6 @@ const constructorMethod = app => {
                 throw `Please Sign In to Like the Post`
             }
             const postId = req.params.id
-            // const setLike = await postData.likePost(postId);
             const addLike = await userData.likePost(req.session.user.id, postId, false);
             if (addLike) {
                 res.redirect('/');
@@ -185,11 +166,9 @@ const constructorMethod = app => {
     app.get('/followUser/:id', async (req, res) => {
         try {
             if (req.session.user === undefined) {
-                throw `Please Sign In to Like the Post`
+                throw `Please Sign In to follow the user`
             }
             const userId = req.params.id
-            // console.log(postId)
-            // console.log(req.session.user.id)
             addFollower = await userData.followUser(req.session.user.id, userId, true);
             if (addFollower) {
                 res.redirect('/');
@@ -204,11 +183,9 @@ const constructorMethod = app => {
     app.get('/unfollowUser/:id', async (req, res) => {
         try {
             if (req.session.user === undefined) {
-                throw `Please Sign In to Like the Post`
+                throw `Please Sign In to unfollow the user`
             }
             const userId = req.params.id
-            // console.log(postId)
-            // console.log(req.session.user.id)
             removeFollower = await userData.followUser(req.session.user.id, userId, false);
             if (removeFollower) {
                 res.redirect('/');
@@ -222,21 +199,20 @@ const constructorMethod = app => {
     });
 
     app.get('/myFav', async (req, res) => {
-        if (req.session.name == 'AuthCookie'){
+        if (req.session.name == 'AuthCookie') {
             const user = await userData.getUserById(req.session.user.id);
             const favoritePosts = await userData.getUserFavoritePostsById(req.session.user.id);
             if (favoritePosts.length > 0) {
 
-                favoritePosts.sort(function(a, b) {
-                    return a.createdAt>b.createdAt ? -1 : a.createdAt<b.createdAt? 1 : 0;
-                    
+                favoritePosts.sort(function (a, b) {
+                    return a.createdAt > b.createdAt ? -1 : a.createdAt < b.createdAt ? 1 : 0;
+
                 });
 
                 res.render('home', {
                     posts: favoritePosts,
                     isUserLoggedIn: isUserLoggedIn,
                     user: req.session.user
-                    //user:user.favoritePosts.author.name
                 });
             }
             else {
@@ -245,20 +221,15 @@ const constructorMethod = app => {
                     posts: posts,
                     isUserLoggedIn: isUserLoggedIn,
                     user: req.session.user,
-                    message: "Sorry, you have not favorited any blogs."
+                    message: "Sorry, you have not favourited any blogs."
                 });
             }
-
-            
         }
-        
-        
     });
 
     app.get('/search', async (req, res) => {
         const string = req.query.key
         var searchedPosts = [];
-        // console.log(string)
         const postsList = await postData.getAllPosts()
         postsList.forEach(obj => {
             var pattern = new RegExp(string, 'ig')
@@ -287,35 +258,10 @@ const constructorMethod = app => {
             }
         });
     });
-
-
     app.post("/addBlog", async (req, res) => {
         const postInfo = req.body;
 
         postInfo.author = { id: req.session.user.id, name: req.session.user.name }
-        // console.log(postInfo)
-        // console.log(postInfo.image)
-
-        if (!postInfo) {
-            res.status(400).json({ error: "You must provide data to create a Post" });
-            return;
-        }
-
-        if (!postInfo.title) {
-            res.status(400).json({ error: "You must provide a title" });
-            return;
-        }
-
-        if (!postInfo.content) {
-            res.status(400).json({ error: "You must provide some content for the post" });
-            return;
-        }
-
-        if (!postInfo.author) {
-            res.status(400).json({ error: "You must provide an author for the post" });
-            return;
-        }
-
         try {
             const newPost = await postData.createPost(
                 postInfo.title,
@@ -327,58 +273,45 @@ const constructorMethod = app => {
 
             res.redirect("/myPosts");
         } catch (e) {
-            res.json({ error: e });
+            res.error = e;
+            res.redirect('/?error=' + encodeURIComponent(res.error));
         }
     });
-
     app.get('/myPosts', async (req, res) => {
-        const user = await userData.getUserById(req.session.user.id)
-        // const postsList = await postData.getPostByName(req.session.user.name)
-        // postsList.forEach(element => {
-        //     element['img']= 'public/img/appstore-new.png'
-        // });
-       
-        console.log('user posts in my posts',user.posts)
-        if (user.posts.length > 0) {
-            const favoritePosts = await userData.getUserFavoritePostsById(req.session.user.id);
-            for (let i = 0; i < user.posts.length; i++) {
-                for (let j = 0; j < favoritePosts.length; j++) {
-                    if (user.posts[i]._id === favoritePosts[j]._id) {
-                        user.posts[i].isLiked = true;
+        if (req.session.name == 'AuthCookie') {
+            const user = await userData.getUserById(req.session.user.id);
+            if (user.posts.length > 0) {
+                const favoritePosts = await userData.getUserFavoritePostsById(req.session.user.id);
+                for (let i = 0; i < user.posts.length; i++) {
+                    for (let j = 0; j < favoritePosts.length; j++) {
+                        if (user.posts[i]._id === favoritePosts[j]._id) {
+                            user.posts[i].isLiked = true;
+                        }
                     }
                 }
+                user.posts.sort(function (a, b) {
+                    return a.createdAt > b.createdAt ? -1 : a.createdAt < b.createdAt ? 1 : 0;
+                });
+                res.render('home', {
+                    posts: user.posts,
+                    isUserLoggedIn: isUserLoggedIn,
+                    user: req.session.user
+                });
+            }   else {
+                let posts = false
+                res.render('home', {
+                    posts: posts,
+                    isUserLoggedIn: isUserLoggedIn,
+                    user: req.session.user,
+                    message: "Sorry, you have not created any blogs yet."
+                });
             }
-
-            user.posts.sort(function(a, b) {
-                return a.createdAt>b.createdAt ? -1 : a.createdAt<b.createdAt? 1 : 0;
-                
-            });
-
-            res.render('home', {
-                posts: user.posts,
-                isUserLoggedIn: isUserLoggedIn,
-                user: req.session.user
-            });
-        }
-        else {
-            let posts = false
-            res.render('home', {
-                posts: posts,
-                isUserLoggedIn: isUserLoggedIn,
-                user: req.session.user,
-                message: "Sorry, you have not created any blogs yet."
-            });
+        } else {
+            res.redirect('/');
         }
     });
-
-    
-
     app.use('*', (req, res) => {
         res.redirect('/');
     });
-
-    
-   
-    
 }
 module.exports = constructorMethod;

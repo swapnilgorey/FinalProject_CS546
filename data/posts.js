@@ -18,10 +18,8 @@ let exportedMethods = {
         if (!id){
             throw "Please provide an id to search for a Post";
         }
-        console.log(id)
         const postCollection = await posts();
         const post = await postCollection.findOne({ _id: id });
-        console.log()
         if (!post) throw "Post not found";
         return post;
     },
@@ -30,10 +28,8 @@ let exportedMethods = {
         if (!name){
             throw "Please provide a name to search for the Post";
         }
-        console.log(name)
         const postCollection = await posts();
         const post = await postCollection.find({'author.name': name}).toArray();
-        console.log(post)
         if (!post) throw "Post not found";
         return post;
     },
@@ -41,11 +37,6 @@ let exportedMethods = {
     async createPost(title, content, author, img, video){
         const postCollection = await posts();
         const userCollection = await users();
-        // console.log(title);
-        // console.log(content);
-        // console.log(author);
-        // console.log(img);
-        // console.log(video);
         if (title==undefined||content==undefined||author==undefined){
             throw `Title, Content and Author fields are mandatory while creating a post.`
         }
@@ -76,7 +67,7 @@ let exportedMethods = {
         }
         if (newId === null) throw "No Post available with that id" + newId ;
 
-        // Updating Animal DB with the post the animal has created
+        // Updating user DB with the post the user has created
         const updateduserInfo = await userCollection.updateOne({_id: author.id}, {$push: {
             posts: {
                 _id:newId,
@@ -97,15 +88,9 @@ let exportedMethods = {
             throw "Could not update this Post";
         }
         else{
-           console.log("The Post is added to animal account info")
+           console.log("The Post is added to user's account info")
         }
-        console.log(this.getPostById(newId))
         return await this.getPostById(newId);
     },
-
- 
-   
-    
-   
 }
 module.exports=exportedMethods;
