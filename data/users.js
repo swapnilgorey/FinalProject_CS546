@@ -16,10 +16,10 @@ let exportedMethods = {
         const userName = await userCollection.findOne({username:username})
         const eMail = await userCollection.findOne({email:email})
         if (userName!==null){
-            throw `Username already exists. Please try a differnet username`
+            throw `Username already exists. Please try a different username`
         }
         if (eMail!==null){
-            throw `Email already exists. Please try a differnet email`
+            throw `Email already exists. Please try a different email`
         }
         var BCRYPT_SALT_ROUNDS = 12
         let hashedPassword = await bcrypt.hash(password,BCRYPT_SALT_ROUNDS);

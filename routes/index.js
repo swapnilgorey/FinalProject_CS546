@@ -81,15 +81,17 @@ const constructorMethod = app => {
         if (req.session.name == 'AuthCookie') {
             isUserLoggedIn = true
             const followingList = await userData.getUserFollowingUserListById(req.session.user.id);
+            console.log(followingList);
             if (req.params.id) {
                 const selectedUser = await userData.getUserById(req.params.id);
                 const loggedInUser = await userData.getUserById(req.session.user.id);
                 followingList.forEach(followingUser => {
                     if (followingUser.id === selectedUser.id) {
                         selectedUser['alreadyFollowing'] = true;
-                    } else {
-                        selectedUser['alreadyFollowing'] = false;
                     }
+                    // } else {
+                    //     selectedUser['alreadyFollowing'] = false;  //follow unfollow bug fixed
+                    // }
                 });
                 const isLoggedInUser = selectedUser.id === loggedInUser.id ? true : false;
                 res.render('userdetails', { isUserLoggedIn: isUserLoggedIn, selectedUser: selectedUser, user: loggedInUser, isLoggedInUser: isLoggedInUser });
