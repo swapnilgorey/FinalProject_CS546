@@ -9,33 +9,38 @@
     <article class="blog-list">
         <div>
             <div>
-                <img src='{{this.img}}' width='70px' height="70px">
                 <h3>{{this.title}}</h3>
-                {{!-- <icon onclick="(this.favorite= !this.favorite)" class="ifFavorite? red: empty"> heart icon</icon> --}}
+                {{!-- <icon onclick="(this.favorite= !this.favorite)" class="ifFavorite? red: empty"> heart icon</icon>
+                --}}
                 <a href="/userdetails/{{this.author._id}}">
-                    <p class='padding-none'> Posted By:{{this.author.name}} at {{this.createdAt}}</p>
+                    <p class='padding-none' style='font-size:13px'> Posted By:{{this.author.name}} at {{this.createdAt}}</p>
                 </a>
                 <br>
                 <div>
-                    <div>
+                    <div style='margin-bottom:10px'>
                         <p class='padding-none text-left-align'>{{this.content}}</p>
                     </div>
-                    {{#if video}}
-                    <div>
-                        <iframe width="420" height="315"src="{{this.video}}">Video</iframe>
+                    <div style='display:flex'>
+                        {{#if img}}
+                        <div class='img-style'>
+                            <img src='{{this.img}}' width="420" height="311">
+                        </div>
+                        {{/if}}
+
+                        {{#if video}}
+                        <div>
+                            <iframe width="420" height="315" src={{this.video}}>Video</iframe>
+                        </div>
+                        {{/if}}
                     </div>
-                    {{/if}}
                     <div style="margin-top: 10px">
                         {{#if this.isLiked}}
-                        <a href="/unlike/{{this._id}}"><i class='glyphicon glyphicon-heart'
-                                style='font-size:24px'></i></a>
+                        <a href="/unlike/{{this._id}}"><i class='glyphicon glyphicon-heart' style='font-size:24px'></i></a>
                         {{else}}
-                        <a href="/like/{{this._id}}"><i class='glyphicon glyphicon-heart-empty'
-                                style='font-size:24px'></i></a>
+                        <a href="/like/{{this._id}}"><i class='glyphicon glyphicon-heart-empty' style='font-size:24px'></i></a>
                         {{/if}}
                     </div>
                 </div>
-
             </div>
             {{!-- <header class='bloglist'> --}}
 
@@ -49,14 +54,14 @@
     {{/if}}
 </section>
 
-{{!-- 
-<div class=allposts >
+{{!--
+<div class=allposts>
     {{#each posts}}
     <dl>
         <dd id="blogtitles">{{this.title}}</dd>
         <dd id="blogauthor" style="display:inline-block">Posted By: {{this.author.name}}</dd>
         <br>
-        <dt id= "blogcontent"> "{{this.content}}</dt>
-    </dl>   
-    
+        <dt id="blogcontent"> "{{this.content}}</dt>
+    </dl>
+
 </div> --}}
