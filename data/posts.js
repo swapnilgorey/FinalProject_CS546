@@ -46,6 +46,9 @@ let exportedMethods = {
         if (typeof(author)!='object'){
             throw `Author field Should be an object having AuthorID and AuthorName .`
         }
+        if (!video.includes('embed')){
+            video="";
+        }
         //Inserting the New Post  in Post DB
         let newPost={
             _id:uuid.v4(),

@@ -33,6 +33,12 @@ header {
     background: white;
 }
 
+.img-style{
+    margin-right:25px;
+    border:2px solid #a5a2a2;
+    height:315px;
+}
+
 .padding-none{
     padding :0px !important;
 }
